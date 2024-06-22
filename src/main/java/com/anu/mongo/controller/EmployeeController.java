@@ -1,6 +1,8 @@
 package com.anu.mongo.controller;
 
 import java.util.List;
+import java.util.Optional;
+import java.util.Map.Entry;
 import java.util.concurrent.CompletableFuture;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -53,11 +55,6 @@ public class EmployeeController {
 	public EmployeeModel updateEmployeebyId(@RequestBody EmployeeModel updateModel) {
 		return employeeService.updateExistingEmployee(updateModel);
 	}
-
-	@GetMapping("/delete/{empId}")
-	public String deleteEmployeeByID(@PathVariable String empId) {
-		return employeeService.deleteEmployeeById(empId);
-	}
 	
 	@GetMapping("/department/{department}")
 	public List<EmployeeModel> findByDepartment(@PathVariable String department) {
@@ -82,12 +79,38 @@ public class EmployeeController {
 		@GetMapping("/experience/{years}")
 		public List<EmployeeModel> findAllEmployeeBasedOnExperienceRange(@PathVariable String years) {
 			log.info("findAllEmployeeBasedOnExperienceRange() called ");
-			return employeeService.findAllEmployeeBasedOnExperienceRange(years);
+			return employeeService.findAllEmployeeBasedOnExperience(years);
 		}
 		
+		@DeleteMapping("/delete/{empId}")
+		public String deleteEmployeeByID(@PathVariable Integer empId) {
+			return employeeService.deleteEmployeeById(empId);
+		}
+		
+		/*
 		@DeleteMapping("/delete/all")
-	    public CompletableFuture<ResponseEntity<Void>> deleteAllEmployees() {
-	        return employeeService.deleteAllEmployees().thenApply(aVoid -> ResponseEntity.noContent().build());
-	    }
+	    public String deleteAllEmployees() {
+	         CompletableFuture<Void> deleteAllEmployees = employeeService.deleteAllEmployees();
+	         if(deleteAllEmployees.isDone())
+	         {
+	        	 return "Your entire table data has been deleted";
+	         }
+	         else
+	         {
+	        	 return "Your table data not able to delete";
+	         }
+	    } */
+		
+		@GetMapping("/maxsal/department")
+		public List<Entry<String,Optional<EmployeeModel>>>  maxSalariedEmployeesInDepartmentwise()
+		{
+			return employeeService.maxSalariedEmployeesInDepartmentwise();
+		}
+		
+		@GetMapping("/minsal/department")
+		public List<Entry<String,Optional<EmployeeModel>>>  minSalariedEmployeesInDepartmentwise()
+		{
+			return employeeService.minSalariedEmployeesInDepartmentwise();
+		}
 
 }

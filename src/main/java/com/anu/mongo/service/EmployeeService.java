@@ -1,6 +1,8 @@
 package com.anu.mongo.service;
 
 import java.util.List;
+import java.util.Optional;
+import java.util.Map.Entry;
 import java.util.concurrent.CompletableFuture;
 
 import org.springframework.http.ResponseEntity;
@@ -17,7 +19,7 @@ public interface EmployeeService {
 
 	EmployeeModel updateExistingEmployee(EmployeeModel updateModel);
 
-	String deleteEmployeeById(String empId);
+	String deleteEmployeeById(Integer empId);
 	
 	List<EmployeeModel> findByDepartment(String department);
 
@@ -25,8 +27,13 @@ public interface EmployeeService {
 
 	List<EmployeeModel> findAllEmployeeBasedOnSalaryRange(Double minSal, Double maxSal);
 
-	List<EmployeeModel> findAllEmployeeBasedOnExperienceRange(String years);
+	List<EmployeeModel> findAllEmployeeBasedOnExperience(String years);
 
-	CompletableFuture<Void> deleteAllEmployees();
+	List<Entry<String,Optional<EmployeeModel>>>  maxSalariedEmployeesInDepartmentwise();
+	List<Entry<String,Optional<EmployeeModel>>>  minSalariedEmployeesInDepartmentwise();
+
+	
+
+	//CompletableFuture<Void> deleteAllEmployees();
 
 }

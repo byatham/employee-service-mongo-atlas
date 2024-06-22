@@ -24,6 +24,6 @@ public interface EmployeeRepository extends MongoRepository<EmployeeModel, Strin
 	
 	@Query("{ 'yearsOfExperience' :?0 } ")
 
-	List<EmployeeModel> findAllEmployeeBasedOnExperienceRange(String years);
+	List<EmployeeModel> findAllEmployeeBasedOnExperience(String years);
 
 }

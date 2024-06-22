@@ -1,16 +1,16 @@
 package com.anu.mongo.service;
 
+import java.util.Comparator;
 import java.util.List;
-import java.util.concurrent.CompletableFuture;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Optional;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
-import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
-import org.springframework.util.ObjectUtils;
 
 import com.anu.mongo.model.EmployeeModel;
 import com.anu.mongo.repositories.EmployeeRepository;
@@ -23,7 +23,7 @@ public class EmployeeServiceImpl implements EmployeeService{
 	
 	private EmployeeRepository employeeRepository;
 	private ExecutorService executor;
-    private final ExecutorService executorService = Executors.newFixedThreadPool(10);
+   // private final ExecutorService executorService = Executors.newFixedThreadPool(10);
 
 	@Autowired
 	public EmployeeServiceImpl(EmployeeRepository employeeRepository,ExecutorService executor) {
@@ -44,7 +44,6 @@ public class EmployeeServiceImpl implements EmployeeService{
 
 	@Override
 	public List<EmployeeModel> findAllEmployees() {
-		//return  CompletableFuture.supplyAsync(() -> employeeRepository.findAll(), executor);
 		 
 		 return employeeRepository.findAll();
 	}
@@ -56,21 +55,7 @@ public class EmployeeServiceImpl implements EmployeeService{
 		return employeeRepository.save(updateModel);
 	}
 
-	@Override
-	public String deleteEmployeeById(String empId) {
-		EmployeeModel employeeModel = employeeRepository.findById(empId).get();
-		if(ObjectUtils.isEmpty(employeeModel))
-		{
-			 employeeRepository.delete(employeeModel);
-			 return "your data has been deleted in db "+empId;
-		}
-		else
-		{
-			return "no data found with "+empId;
-		}
-		
-		
-	}
+	
 
 	@Override
 	public List<EmployeeModel> findByDepartment(String department) {
@@ -93,18 +78,90 @@ public class EmployeeServiceImpl implements EmployeeService{
 	}
 
 	@Override
-	public List<EmployeeModel> findAllEmployeeBasedOnExperienceRange(String years) {
+	public List<EmployeeModel> findAllEmployeeBasedOnExperience(String years) {
 		log.info("findAllEmployeeBasedOnExperienceRange() called ");
-		return employeeRepository.findAllEmployeeBasedOnExperienceRange(years);
+		return employeeRepository.findAllEmployeeBasedOnExperience(years);
 		
 
 	}
+	
+	@Override
+	public String deleteEmployeeById(Integer empId) {
+		Optional<EmployeeModel> recordFoundInDB = employeeRepository.findById(empId);
+		
+		if(recordFoundInDB.isPresent())
+		{
+			employeeRepository.deleteById(empId.toString());
+			return "your record has been deleted "+empId;
+			
+		}
+		else
+		{
+			return "record not found with given empid "+empId;
 
+		}
+		
+		
+	}
+ /*
 	@Override
 	public CompletableFuture<Void> deleteAllEmployees() {
 		
-        return CompletableFuture.runAsync(() -> employeeRepository.deleteAll(),executorService);
+        //return CompletableFuture.runAsync(() -> employeeRepository.deleteAll(),executorService);
+		
+		return CompletableFuture.runAsync(() -> {
+            try {
+                employeeRepository.deleteAll();
+            } catch (Exception e) {
+                log.info("Exceptions occurred while processing data: " + e.getMessage());
+            }
+        }, executorService);
 
+	} */
+
+	@Override
+	public List<Entry<String,Optional<EmployeeModel>>> maxSalariedEmployeesInDepartmentwise() {
+		List<EmployeeModel> allEmployessList = employeeRepository.findAll();
+		
+		Map<String,Optional<EmployeeModel>> maxSalariedEmployees= allEmployessList.stream()
+        .collect(Collectors.groupingBy(
+            EmployeeModel::getDepartment,
+            Collectors.maxBy(Comparator.comparingDouble(EmployeeModel::getSalary))
+        ));
+		
+		maxSalariedEmployees.forEach((department, employee) -> {
+            System.out.println("Department: " + department + ", Max Salaried Employee: " + employee.get());
+        });
+		
+		List<Entry<String,Optional<EmployeeModel>>> employeesInEachDepartWithMaxSal = maxSalariedEmployees.entrySet()
+		.stream()
+		.collect(Collectors.toList());
+		
+		return employeesInEachDepartWithMaxSal;
+		
 	}
+	
+	@Override
+	public List<Entry<String,Optional<EmployeeModel>>> minSalariedEmployeesInDepartmentwise() {
+		List<EmployeeModel> allEmployessList = employeeRepository.findAll();
+		
+		Map<String,Optional<EmployeeModel>> minSalariedEmployees= allEmployessList.stream()
+        .collect(Collectors.groupingBy(
+            EmployeeModel::getDepartment,
+            Collectors.minBy(Comparator.comparingDouble(EmployeeModel::getSalary))
+        ));
+		
+		minSalariedEmployees.forEach((department, employee) -> {
+            System.out.println("Department: " + department + ", Max Salaried Employee: " + employee.get());
+        });
+		
+		List<Entry<String,Optional<EmployeeModel>>> employeesInEachDepartWithMinSal = minSalariedEmployees.entrySet()
+		.stream()
+		.collect(Collectors.toList());
+		
+		return employeesInEachDepartWithMinSal;
+		
+	}
+	
 
 }
