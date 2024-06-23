@@ -15,9 +15,9 @@ import lombok.NoArgsConstructor;
 @Document(collection = "sd_employees")
 public class EmployeeModel {
 	
-	
 	@Id
 	private int id;
+	
 	@Field(name = "first_name")
 	private String first_name;
 	

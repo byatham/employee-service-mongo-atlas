@@ -7,6 +7,7 @@ import java.util.concurrent.CompletableFuture;
 
 import org.springframework.http.ResponseEntity;
 
+import com.anu.mongo.exceptions.EmployeeNotFound;
 import com.anu.mongo.model.EmployeeModel;
 
 public interface EmployeeService {
@@ -17,13 +18,13 @@ public interface EmployeeService {
 
 	List<EmployeeModel> findAllEmployees();
 
-	EmployeeModel updateExistingEmployee(EmployeeModel updateModel);
+	EmployeeModel updateExistingEmployee(EmployeeModel updateModel) throws EmployeeNotFound;
 
 	String deleteEmployeeById(Integer empId);
 	
 	List<EmployeeModel> findByDepartment(String department);
 
-	List<EmployeeModel> findAllEmployeeTop5SalariedEmployees(Integer number);
+	List<EmployeeModel> findAllEmployeeTopSalariedEmployees(Integer number);
 
 	List<EmployeeModel> findAllEmployeeBasedOnSalaryRange(Double minSal, Double maxSal);
 
@@ -31,8 +32,6 @@ public interface EmployeeService {
 
 	List<Entry<String,Optional<EmployeeModel>>>  maxSalariedEmployeesInDepartmentwise();
 	List<Entry<String,Optional<EmployeeModel>>>  minSalariedEmployeesInDepartmentwise();
-
-	
 
 	//CompletableFuture<Void> deleteAllEmployees();
 

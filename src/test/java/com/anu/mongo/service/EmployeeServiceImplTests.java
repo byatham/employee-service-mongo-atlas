@@ -20,6 +20,7 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import com.anu.mongo.exceptions.EmployeeNotFound;
 import com.anu.mongo.model.EmployeeModel;
 import com.anu.mongo.repositories.EmployeeRepository;
 
@@ -95,7 +96,7 @@ public class EmployeeServiceImplTests {
 	}
 	
 	@Test
-	void testUpdateExistingEmployee()
+	void testUpdateExistingEmployee() throws EmployeeNotFound
 	{
 		when(employeeRepository.save(empList.get(0))).thenReturn(empList.get(0));
 		
@@ -115,11 +116,11 @@ public class EmployeeServiceImplTests {
 	}
 	
 	@Test
-	void testFindAllEmployeeTop5SalariedEmployees()
+	void testFindAllEmployeeTopSalariedEmployees()
 	{
 		when(employeeRepository.findAll()).thenReturn(empList);
 		
-  List<EmployeeModel> findAllEmployeeTop5SalariedEmployees = employeeServiceImpl.findAllEmployeeTop5SalariedEmployees(1);
+  List<EmployeeModel> findAllEmployeeTop5SalariedEmployees = employeeServiceImpl.findAllEmployeeTopSalariedEmployees(1);
 		assertEquals(20000.0 , findAllEmployeeTop5SalariedEmployees.get(0).getSalary());
 		verify(employeeRepository, times(1)).findAll(); 
 	}

@@ -33,6 +33,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.web.servlet.MockMvc;
 
+import com.anu.mongo.exceptions.EmployeeNotFound;
 import com.anu.mongo.model.EmployeeModel;
 import com.anu.mongo.service.EmployeeService;
 
@@ -109,7 +110,7 @@ public class EmployeeControllerTests {
        }
 
 	@Test
-        void testUpdateEmployeeById() {
+        void testUpdateEmployeeById() throws EmployeeNotFound {
            when(employeeService.updateExistingEmployee(any(EmployeeModel.class))).thenReturn(empList.get(0));
 
            EmployeeModel updatedEmployee = employeeController.updateEmployeebyId(empList.get(0));
@@ -146,17 +147,17 @@ public class EmployeeControllerTests {
 	}
 
 	@Test
-	void testFindAllEmployeeTop5SalariedEmployees() {
+	void testFindAllEmployeeTopSalariedEmployees() {
 		int number = 5;
-		when(employeeService.findAllEmployeeTop5SalariedEmployees(number)).thenReturn(empList);
+		when(employeeService.findAllEmployeeTopSalariedEmployees(number)).thenReturn(empList);
 
-		List<EmployeeModel> topEmployees = employeeController.findAllEmployeeTop5SalariedEmployees(number);
+		List<EmployeeModel> topEmployees = employeeController.findAllEmployeeTopSalariedEmployees(number);
 
 		assertEquals(empList.size(), topEmployees.size());
 		assertEquals(empList.get(0), topEmployees.get(0));
 		assertEquals(empList.get(1), topEmployees.get(1));
 
-		verify(employeeService, times(1)).findAllEmployeeTop5SalariedEmployees(number);
+		verify(employeeService, times(1)).findAllEmployeeTopSalariedEmployees(number);
 	}
 
 	@Test

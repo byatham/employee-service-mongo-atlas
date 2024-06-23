@@ -4,14 +4,16 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.NoSuchElementException;
 import java.util.Optional;
 import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.util.ObjectUtils;
 
+import com.anu.mongo.exceptions.EmployeeNotFound;
 import com.anu.mongo.model.EmployeeModel;
 import com.anu.mongo.repositories.EmployeeRepository;
 
@@ -45,17 +47,34 @@ public class EmployeeServiceImpl implements EmployeeService{
 	@Override
 	public List<EmployeeModel> findAllEmployees() {
 		 
-		 return employeeRepository.findAll();
+		  List<EmployeeModel> allEmployeesInDb = employeeRepository.findAll();
+		  log.info("All employees from backend "+allEmployeesInDb);
+		  return allEmployeesInDb;
 	}
-	
 
 	@Override
-	public EmployeeModel updateExistingEmployee(EmployeeModel updateModel) {
-		
-		return employeeRepository.save(updateModel);
+	public EmployeeModel updateExistingEmployee(EmployeeModel updateModel)throws EmployeeNotFound {
+		log.info("Before upadet record:"+updateModel);
+		try
+		{
+		EmployeeModel empExistingRecord = employeeRepository.findById(updateModel.getId()).get();
+		if(!ObjectUtils.isEmpty(empExistingRecord))
+		{
+			empExistingRecord.setFirst_name(updateModel.getFirst_name());
+			empExistingRecord.setLast_name(updateModel.getLast_name());
+			empExistingRecord.setEmail(updateModel.getEmail());
+			empExistingRecord.setDepartment(updateModel.getDepartment());
+			empExistingRecord.setJob_title(updateModel.getJob_title());
+			empExistingRecord.setSalary(updateModel.getSalary());
+			empExistingRecord.setYears_of_experience(updateModel.getYears_of_experience());
+			log.info("after updating fields before saving record ");
+			return employeeRepository.save(empExistingRecord);
+		}
+		}catch (Exception e) {
+			throw new EmployeeNotFound("Emp not found in db to update ");
+		}
+		throw new EmployeeNotFound("Emp not found in db to update ");
 	}
-
-	
 
 	@Override
 	public List<EmployeeModel> findByDepartment(String department) {
@@ -64,17 +83,22 @@ public class EmployeeServiceImpl implements EmployeeService{
 	}
 
 	@Override
-	public List<EmployeeModel> findAllEmployeeTop5SalariedEmployees(Integer number) {
+	public List<EmployeeModel> findAllEmployeeTopSalariedEmployees(Integer number) {
 		
 		 List<EmployeeModel> allEmployees = employeeRepository.findAll();
+		 log.info("All employees before apply salaries conditions "+allEmployees);
 		  return allEmployees.stream().sorted((e1, e2) -> Double.compare(e2.getSalary(), e1.getSalary()))  // Sort by salary in descending order
-         .limit(number)  // Limit to the top 5
-         .collect(Collectors.toList());  
+         .limit(number)  // Limit to the top number
+         .collect(Collectors.toList());
+		  
 	}
 
 	@Override
 	public List<EmployeeModel> findAllEmployeeBasedOnSalaryRange(Double minSal, Double maxSal) {
-		return employeeRepository.findBySalaryIn(minSal,maxSal);
+		 List<EmployeeModel> employeesInGiveSalCondition = employeeRepository.findBySalaryIn(minSal,maxSal);
+		 log.info("employeesInGiveSalCondition :: "+employeesInGiveSalCondition);
+		 return employeesInGiveSalCondition;
+		 
 	}
 
 	@Override
@@ -88,19 +112,21 @@ public class EmployeeServiceImpl implements EmployeeService{
 	@Override
 	public String deleteEmployeeById(Integer empId) {
 		Optional<EmployeeModel> recordFoundInDB = employeeRepository.findById(empId);
-		
+		log.info("DeleteEmployeeByID() called ***** "+recordFoundInDB.get());
 		if(recordFoundInDB.isPresent())
 		{
 			employeeRepository.deleteById(empId.toString());
+			log.info("your record has been deleted:"+empId);
 			return "your record has been deleted "+empId;
 			
 		}
 		else
 		{
+			log.info("record not found with given empid:"+empId);
+
 			return "record not found with given empid "+empId;
 
-		}
-		
+		}	
 		
 	}
  /*
@@ -128,14 +154,17 @@ public class EmployeeServiceImpl implements EmployeeService{
             EmployeeModel::getDepartment,
             Collectors.maxBy(Comparator.comparingDouble(EmployeeModel::getSalary))
         ));
+		log.info("Before processing record on department and maxsal condition");
 		
 		maxSalariedEmployees.forEach((department, employee) -> {
-            System.out.println("Department: " + department + ", Max Salaried Employee: " + employee.get());
+            log.info("Department: " + department + ", Max Salaried Employee: " + employee.get());
         });
 		
 		List<Entry<String,Optional<EmployeeModel>>> employeesInEachDepartWithMaxSal = maxSalariedEmployees.entrySet()
 		.stream()
 		.collect(Collectors.toList());
+		log.info("After processing record on department and maxsalary condition");
+		log.info("EmployeesInEachDepartWithMaxSal"+employeesInEachDepartWithMaxSal);
 		
 		return employeesInEachDepartWithMaxSal;
 		
@@ -150,17 +179,18 @@ public class EmployeeServiceImpl implements EmployeeService{
             EmployeeModel::getDepartment,
             Collectors.minBy(Comparator.comparingDouble(EmployeeModel::getSalary))
         ));
-		
+		log.info("Before processing record on department and salary minsal condition");
 		minSalariedEmployees.forEach((department, employee) -> {
-            System.out.println("Department: " + department + ", Max Salaried Employee: " + employee.get());
+            log.info("Department: " + department + ", min Salaried Employee: " + employee.get());
         });
 		
 		List<Entry<String,Optional<EmployeeModel>>> employeesInEachDepartWithMinSal = minSalariedEmployees.entrySet()
 		.stream()
 		.collect(Collectors.toList());
+		log.info("After processing record on department and minsalary condition");
+		log.info("EmployeesInEachDepartWithMinSal"+employeesInEachDepartWithMinSal);
 		
 		return employeesInEachDepartWithMinSal;
-		
 	}
 	
 

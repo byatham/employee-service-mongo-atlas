@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.anu.mongo.exceptions.EmployeeNotFound;
 import com.anu.mongo.model.EmployeeModel;
 import com.anu.mongo.service.EmployeeService;
 
@@ -37,6 +38,7 @@ public class EmployeeController {
 	@PostMapping("/save")
 	public ResponseEntity<EmployeeModel> saveEmployee(@RequestBody EmployeeModel employeeModel) {
 		 EmployeeModel saveNewEmployee = employeeService.saveNewEmployee(employeeModel);
+		 log.info("saved record in db"+saveNewEmployee);
 		 return new ResponseEntity<>(saveNewEmployee, HttpStatusCode.valueOf(201));
 	}
 
@@ -51,8 +53,9 @@ public class EmployeeController {
 		return employeeService.findAllEmployees();
 	}
 
-	@PutMapping("/update/")
-	public EmployeeModel updateEmployeebyId(@RequestBody EmployeeModel updateModel) {
+	@PutMapping("/update")
+	public EmployeeModel updateEmployeebyId(@RequestBody EmployeeModel updateModel) throws EmployeeNotFound {
+		log.info("updateEmployeebyId() called ***** ");
 		return employeeService.updateExistingEmployee(updateModel);
 	}
 	
@@ -65,8 +68,8 @@ public class EmployeeController {
 	
 	//top salaried employees based on user input
 	@GetMapping("/topSalaries/{number}")
-	public List<EmployeeModel> findAllEmployeeTop5SalariedEmployees(@PathVariable Integer number) {
-		return employeeService.findAllEmployeeTop5SalariedEmployees(number);
+	public List<EmployeeModel> findAllEmployeeTopSalariedEmployees(@PathVariable Integer number) {
+		return employeeService.findAllEmployeeTopSalariedEmployees(number);
 	}
 	
 	  // salaried  range employees based on user input
