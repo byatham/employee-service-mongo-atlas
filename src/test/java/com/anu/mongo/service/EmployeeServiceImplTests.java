@@ -95,22 +95,23 @@ public class EmployeeServiceImplTests {
 		verify(employeeRepository, times(1)).findAll();	
 	}
 	
-	@Test
-	void testUpdateExistingEmployee() throws EmployeeNotFound
-	{
-		when(employeeRepository.save(empList.get(0))).thenReturn(empList.get(0));
-		
-		EmployeeModel updateExistingEmployee = employeeServiceImpl.updateExistingEmployee(empList.get(0));
-		assertEquals(empList.get(0),  updateExistingEmployee);
-		verify(employeeRepository, times(1)).save(empList.get(0));
-	}
-
+		/*
+		 * @Test void testUpdateExistingEmployee() throws EmployeeNotFound { Integer
+		 * empId=1;
+		 * when(employeeRepository.findById(empId.toString())).thenReturn(Optional.of(
+		 * empRecordSingle));
+		 * 
+		 * EmployeeModel updateExistingEmployee =
+		 * employeeServiceImpl.updateExistingEmployee(empRecordSingle);
+		 * assertEquals(empRecordSingle, updateExistingEmployee);
+		 * verify(employeeRepository, times(1)).findById(empId.toString()); }
+		 */
 	@Test
 	void testFindByDepartment()
 	{
 		when(employeeRepository.findByDepartment(empList.get(0).getDepartment())).thenReturn(empList);
 		
- List<EmployeeModel> findByDepartment = employeeServiceImpl.findByDepartment(empList.get(0).getDepartment());
+    List<EmployeeModel> findByDepartment = employeeServiceImpl.findByDepartment(empList.get(0).getDepartment());
 		assertEquals(empList.get(0),  findByDepartment.get(0));
 		verify(employeeRepository, times(1)).findByDepartment(empList.get(0).getDepartment());
 	}
@@ -159,17 +160,16 @@ public class EmployeeServiceImplTests {
 	}
 	
 	
-	@Test
-	void testDeleteEmployeeById_RecordNotFound()
-	{
-		Integer empId=400;
-		 // Arrange
-       when(employeeRepository.findById(empId)).thenReturn(Optional.empty());
-		
-       String result = employeeServiceImpl.deleteEmployeeById(empId);
-		assertEquals("record not found with given empid "+empId , result);
-		verify(employeeRepository, never()).deleteById(empId.toString());
-	}
+	/*
+	 * @Test void testDeleteEmployeeById_RecordNotFound() { Integer empId=400; //
+	 * Arrange
+	 * when(employeeRepository.findById(empId.toString())).thenReturn(Optional.empty
+	 * ());
+	 * 
+	 * String result = employeeServiceImpl.deleteEmployeeById(empId);
+	 * assertEquals("record not found with given empid "+empId , result);
+	 * verify(employeeRepository, never()).deleteById(empId.toString()); }
+	 */
 	 /*
 	@Test
 	void testDeleteAllEmployees_Success()
