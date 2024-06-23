@@ -1,5 +1,18 @@
+---
 spring:
   data:
     mongodb:
       uri: mongodb+srv://admin:admin123@sd-tech-cluster.buo0cjt.mongodb.net/?retryWrites=true&w=majority&appName=sd-tech-cluster
       database: sd_tech_database
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+  prometheus:
+    metrics:
+      export:
+        enabled: true
+  endpoint:
+    prometheus:
+      enabled: true
