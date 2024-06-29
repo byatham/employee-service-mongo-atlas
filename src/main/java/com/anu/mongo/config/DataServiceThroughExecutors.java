@@ -54,9 +54,16 @@ public class DataServiceThroughExecutors {
 					new TypeReference<List<EmployeeModel>>() {
 					});
 
-			List<CompletableFuture<Void>> futures = employeeData.stream()
+			/*List<CompletableFuture<Void>> futures = employeeData.stream()
 					.map(item -> CompletableFuture.runAsync(() -> employeeRepository.save(item), executor))
-					.collect(Collectors.toList());
+					.collect(Collectors.toList()); */
+			List<CompletableFuture<Void>> futures = employeeData.stream()
+                    .map(item -> {
+                        // Convert the int employeeNumber to String and set it as the id
+                        item.setId(String.valueOf(item.getId()));
+                        return CompletableFuture.runAsync(() -> employeeRepository.save(item), executor);
+                    })
+                    .collect(Collectors.toList());
 
 			CompletableFuture<Void> allFutures = CompletableFuture.allOf(futures.toArray(new CompletableFuture[0]));
 			log.info("data processed successfully");

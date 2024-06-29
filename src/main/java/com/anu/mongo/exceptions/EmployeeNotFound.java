@@ -3,7 +3,7 @@ package com.anu.mongo.exceptions;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
-public class EmployeeNotFound extends Exception{
+public class EmployeeNotFound extends RuntimeException{
 	
 	private static final long serialVersionUID = 1L;
 

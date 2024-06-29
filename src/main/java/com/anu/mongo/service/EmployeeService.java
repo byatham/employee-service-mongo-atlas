@@ -14,13 +14,13 @@ public interface EmployeeService {
 
 	EmployeeModel saveNewEmployee(EmployeeModel employeeModel);
 
-	EmployeeModel findSavedEmployeeById(Integer empId);
+	EmployeeModel findSavedEmployeeById(String empId);
 
 	List<EmployeeModel> findAllEmployees();
 
 	EmployeeModel updateExistingEmployee(EmployeeModel updateModel) throws EmployeeNotFound;
 
-	String deleteEmployeeById(Integer empId);
+	String deleteEmployeeById(String empId);
 	
 	List<EmployeeModel> findByDepartment(String department);
 

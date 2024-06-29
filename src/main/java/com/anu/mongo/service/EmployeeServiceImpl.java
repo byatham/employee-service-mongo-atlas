@@ -10,6 +10,8 @@ import java.util.concurrent.ExecutorService;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.util.ObjectUtils;
 
@@ -40,16 +42,25 @@ public class EmployeeServiceImpl implements EmployeeService{
 	}
 
 	@Override
-	public EmployeeModel findSavedEmployeeById(Integer empId) {
+	@CacheEvict(value = "employees", allEntries = true)
+	public EmployeeModel findSavedEmployeeById(String empId) {
 		return employeeRepository.findById(empId).get();
 	}
 
 	@Override
+	@Cacheable(value = "employees")
 	public List<EmployeeModel> findAllEmployees() {
+		try {
+			Thread.sleep(2000);
+			 List<EmployeeModel> allEmployeesInDb = employeeRepository.findAll();
+			  log.info("All employees from backend "+allEmployeesInDb);
+			  return allEmployeesInDb;
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		 return null;
 		 
-		  List<EmployeeModel> allEmployeesInDb = employeeRepository.findAll();
-		  log.info("All employees from backend "+allEmployeesInDb);
-		  return allEmployeesInDb;
 	}
 
 	@Override
@@ -110,12 +121,13 @@ public class EmployeeServiceImpl implements EmployeeService{
 	}
 	
 	@Override
-	public String deleteEmployeeById(Integer empId) {
+	@Cacheable(value = "employees", key = "#a0")
+	public String deleteEmployeeById(String empId) {
 		Optional<EmployeeModel> recordFoundInDB = employeeRepository.findById(empId);
 		log.info("DeleteEmployeeByID() called ***** "+recordFoundInDB.get());
 		if(recordFoundInDB.isPresent())
 		{
-			employeeRepository.deleteById(empId.toString());
+			employeeRepository.deleteById(empId);
 			log.info("your record has been deleted:"+empId);
 			return "your record has been deleted "+empId;
 			

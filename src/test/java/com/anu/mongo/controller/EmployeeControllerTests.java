@@ -62,11 +62,11 @@ public class EmployeeControllerTests {
 	@BeforeAll
 	public void setUpAll() {
 		empList = Arrays.asList(
-				new EmployeeModel(1, "John", "Doe", "john.doe@example.com", "1234567890", "Male", 30, "Developer", "5",
+				new EmployeeModel("1", "John", "Doe", "john.doe@example.com", "1234567890", "Male", 30, "Developer", "5",
 						10000.0, "IT"),
-				new EmployeeModel(2, "Balu", "Doe", "balu.y@example.com", "1234567890", "Male", 30, "Developer", "5",
+				new EmployeeModel("2", "Balu", "Doe", "balu.y@example.com", "1234567890", "Male", 30, "Developer", "5",
 						20000.0, "IT"),
-				new EmployeeModel(3, "Jagan", "Doe", "jagan.doe@example.com", "1234567890", "Male", 30, "Tester", "5",
+				new EmployeeModel("3", "Jagan", "Doe", "jagan.doe@example.com", "1234567890", "Male", 30, "Tester", "5",
 						5000.0, "IT"));
 	}
 
@@ -85,7 +85,7 @@ public class EmployeeControllerTests {
 
 	@Test
 	void testFindEmployeeById() {
-		int empId = 1;
+		String empId=String.valueOf(1);
 		when(employeeService.findSavedEmployeeById(empId)).thenReturn(empList.get(0));
 
 		EmployeeModel foundEmployee = employeeController.findEmployeeByID(empId);
@@ -122,7 +122,7 @@ public class EmployeeControllerTests {
 
 	@Test
 	void testDeleteEmployeeById() {
-		Integer empId = 1;
+		String empId=String.valueOf(1);
 		when(employeeService.deleteEmployeeById(empId)).thenReturn("Employee with ID " + empId + " deleted");
 
 		String result = employeeController.deleteEmployeeByID(empId);

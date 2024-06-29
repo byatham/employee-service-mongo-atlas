@@ -43,7 +43,7 @@ public class EmployeeController {
 	}
 
 	@GetMapping("/find/{empId}")
-	public EmployeeModel findEmployeeByID(@PathVariable Integer empId) {
+	public EmployeeModel findEmployeeByID(@PathVariable String empId) {
 		return employeeService.findSavedEmployeeById(empId);
 	}
 
@@ -86,7 +86,8 @@ public class EmployeeController {
 		}
 		
 		@DeleteMapping("/delete/{empId}")
-		public String deleteEmployeeByID(@PathVariable Integer empId) {
+		public String deleteEmployeeByID(@PathVariable String empId) {
+			log.info("deleteEmployeeByID() in Controller "+empId);
 			return employeeService.deleteEmployeeById(empId);
 		}
 		

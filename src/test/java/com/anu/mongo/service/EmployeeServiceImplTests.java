@@ -49,15 +49,15 @@ public class EmployeeServiceImplTests {
 	    @BeforeAll
 	    static void setUpAll()
 	    {
-	    	empList=Arrays.asList(new EmployeeModel(1, "John", "Doe", "john.doe@example.com", "1234567890", "Male", 30, "Developer", "5", 10000.0, "IT"),
-	    			new EmployeeModel(2, "Balu", "Doe", "balu.y@example.com", "1234567890", "Male", 30, "Recruiter", "9", 20000.0, "HR"),
-	    			new EmployeeModel(3, "Jagan", "Doe", "jagan.doe@example.com", "1234567890", "Male", 30, "Tester", "15", 5000.0, "Testing")
+	    	empList=Arrays.asList(new EmployeeModel("1", "John", "Doe", "john.doe@example.com", "1234567890", "Male", 30, "Developer", "5", 10000.0, "IT"),
+	    			new EmployeeModel("2", "Balu", "Doe", "balu.y@example.com", "1234567890", "Male", 30, "Recruiter", "9", 20000.0, "HR"),
+	    			new EmployeeModel("3", "Jagan", "Doe", "jagan.doe@example.com", "1234567890", "Male", 30, "Tester", "15", 5000.0, "Testing")
 	    			);
 	    	
-	    	EmployeeModel singleEmployee=	new EmployeeModel(1, "Nagaiah", "G", "nag.g@example.com", "1234567890", "Male", 35, "Developer", "20", 30000.0, "IT");
+	    	EmployeeModel singleEmployee=	new EmployeeModel("1", "Nagaiah", "G", "nag.g@example.com", "1234567890", "Male", 35, "Developer", "20", 30000.0, "IT");
 	    	listWithSingle = Arrays.asList(singleEmployee);
 	    	
-	    	empRecordSingle=new EmployeeModel(1, "Nagaiah", "G", "nag.g@example.com", "1234567890", "Male", 35, "Developer", "20", 30000.0, "IT");
+	    	empRecordSingle=new EmployeeModel("1", "Nagaiah", "G", "nag.g@example.com", "1234567890", "Male", 35, "Developer", "20", 30000.0, "IT");
 
 	    }
 
@@ -150,13 +150,13 @@ public class EmployeeServiceImplTests {
 	@Test
 	void testDeleteEmployeeById_RecordFound()
 	{
-		Integer empId=1;
+		String empId=String.valueOf(1);
 		 // Arrange
         when(employeeRepository.findById(empId)).thenReturn(Optional.of(empRecordSingle));
 		
         String result = employeeServiceImpl.deleteEmployeeById(empId);
 		assertEquals("your record has been deleted 1" , result);
-		verify(employeeRepository, times(1)).deleteById(empId.toString());
+		verify(employeeRepository, times(1)).deleteById(empId);
 	}
 	
 	

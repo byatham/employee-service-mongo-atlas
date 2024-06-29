@@ -13,8 +13,8 @@ import com.anu.mongo.model.EmployeeModel;
 public interface EmployeeRepository extends MongoRepository<EmployeeModel, String>{
 
 	
-	@Query("{ id:?0 }")
-	Optional<EmployeeModel> findById(Integer empId);
+	//@Query("{ id:?0 }")
+	//Optional<EmployeeModel> findById(Integer empId);
 
 	List<EmployeeModel> findByDepartment(String department);
 
