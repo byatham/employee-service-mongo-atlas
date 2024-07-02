@@ -24,6 +24,8 @@ public class EmployeeServiceMongoAtlasApplication {
         log.info("doStuff took input - {}", value);
         log.warn("doStuff needed to warn - {}", value);
         log.error("doStuff encountered an error with value - {}", value);
+        log.info("doStuff took input mg-101 - {}", value);
+
 	}
 	
 	@Bean
