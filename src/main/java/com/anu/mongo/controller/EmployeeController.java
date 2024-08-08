@@ -15,9 +15,11 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.anu.mongo.exceptions.EmployeeNotFound;
+import com.anu.mongo.model.EmployeeDataSession;
 import com.anu.mongo.model.EmployeeModel;
 import com.anu.mongo.service.EmployeeService;
 
@@ -28,7 +30,11 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class EmployeeController {
 
+	@Autowired
+	private EmployeeDataSession employeeDataSession;
+	
 	private EmployeeService employeeService;
+	
    @Autowired
 	public EmployeeController(EmployeeService employeeService) {
 		this.employeeService = employeeService;
@@ -37,6 +43,7 @@ public class EmployeeController {
 
 	@PostMapping("/save")
 	public ResponseEntity<EmployeeModel> saveEmployee(@RequestBody EmployeeModel employeeModel) {
+		employeeDataSession.setEmployeeName(employeeModel.getFirst_name());
 		 EmployeeModel saveNewEmployee = employeeService.saveNewEmployee(employeeModel);
 		 log.info("saved record in db"+saveNewEmployee);
 		 return new ResponseEntity<>(saveNewEmployee, HttpStatusCode.valueOf(201));
@@ -116,5 +123,19 @@ public class EmployeeController {
 		{
 			return employeeService.minSalariedEmployeesInDepartmentwise();
 		}
+		
+		@GetMapping("/get/session/data")
+		public String  getEmployeeSessionData()
+		{
+			return employeeDataSession.getEmployeeName();
+		}
+		
+		@GetMapping("/set/session/data")
+		public void  setEmployeeSessionData(@RequestParam String name)
+		{
+			System.out.println("dummy");
+			 employeeDataSession.setEmployeeName(name); 
+		}
+		
 
 }
