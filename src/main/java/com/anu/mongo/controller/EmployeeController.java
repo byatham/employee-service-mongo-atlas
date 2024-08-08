@@ -45,7 +45,7 @@ public class EmployeeController {
 	public ResponseEntity<EmployeeModel> saveEmployee(@RequestBody EmployeeModel employeeModel) {
 		employeeDataSession.setEmployeeName(employeeModel.getFirst_name());
 		 EmployeeModel saveNewEmployee = employeeService.saveNewEmployee(employeeModel);
-		 log.info("saved record in db"+saveNewEmployee);
+		 log.info("saved record in db my record"+saveNewEmployee);
 		 return new ResponseEntity<>(saveNewEmployee, HttpStatusCode.valueOf(201));
 	}
 
